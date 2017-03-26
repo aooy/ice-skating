@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>myswiper</title>
+<meta charset="utf-8"/>
 <style type="text/css">
 .swiper-container{
 	margin-left: auto;
@@ -54,17 +55,29 @@
     height: 100%;
     position: relative;
 }
+.swiper-container-vertical > .swiper-wrapper{
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+aa{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
 </style>
 </head>
 <body>
 <div class="swiper-container">
     <div class="swiper-wrapper" id="sw1">
-        <div class="swiper-slide">Slide 1</div>
+        <div class="swiper-slide" ><div class='aa' >Slide 1</div></div>
         <div class="swiper-slide">Slide 2</div>
         <div class="swiper-slide">Slide 3</div>
     </div>
 </div>
-<div class="swiper-container">
+<div class="swiper-container swiper-container-vertical">
     <div class="swiper-wrapper" id="sw2">
         <div class="swiper-slide">Slide 1</div>
         <div class="swiper-slide">Slide 2</div>
@@ -74,12 +87,15 @@
 <script type="text/javascript" src="../dist/iceSkating.js"></script>
 <script type="text/javascript">
 	var a = new iceSkating({
-		containerId: '#sw1'
+		containerId: '#sw1',
 	});
 	var b = new iceSkating({
 		containerId: '#sw2',
 		direction: 'y'
 	});
+    document.querySelector('#sw1').addEventListener('click',function(){
+        console.log(111)
+    })
 </script>
 </body>
 </html>

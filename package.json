@@ -1,0 +1,26 @@
+{
+  "name": "ice-skating",
+  "version": "0.1.0",
+  "description": "most modern mobile touch slider",
+  "main": "dist/iceSkating.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aooy/ice-skating.git"
+  },
+  "keywords": [
+    "touch",
+    "slider"
+  ],
+  "author": "YangJingZhuo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aooy/ice-skating/issues"
+  },
+  "homepage": "https://github.com/aooy/ice-skating#readme"
+}
