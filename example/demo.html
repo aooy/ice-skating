@@ -62,40 +62,81 @@
     -webkit-flex-direction: column;
     flex-direction: column;
 }
-aa{
-    display: inline-block;
-    width: 100%;
-    height: 100%;
+.swiper-containerPc{
+    width:300px;
+    height:200px;
+    position:relative;
+    margin: 0 auto;
+    overflow: hidden;
 }
+.swiper-wrapperPc{
+    width:900px;
+    height:200px;
+    position:relative;
+}
+.swiper-slidePc{
+    width:300px;
+    height: 100%;
+    float: left;
+    text-align: center;
+}
+
 </style>
 </head>
 <body>
 <div class="swiper-container">
-    <div class="swiper-wrapper" id="sw1">
-        <div class="swiper-slide" ><div class='aa' >Slide 1</div></div>
+    <div class="swiper-wrapper" id="ic1">
+        <div class="swiper-slide">Slide 1<a href="www.hao123.com">2222</a></div>
         <div class="swiper-slide">Slide 2</div>
         <div class="swiper-slide">Slide 3</div>
     </div>
 </div>
 <div class="swiper-container swiper-container-vertical">
-    <div class="swiper-wrapper" id="sw2">
+    <div class="swiper-wrapper" id="ic2">
         <div class="swiper-slide">Slide 1</div>
         <div class="swiper-slide">Slide 2</div>
         <div class="swiper-slide">Slide 3</div>
     </div>
 </div>
+<div class="swiper-containerPc">
+<div class="swiper-wrapperPc" id="ic3">
+    <div class="swiper-slidePc">1</div>
+    <div class="swiper-slidePc">2</div>
+    <div class="swiper-slidePc">3</div>
+</div>
+</div>
 <script type="text/javascript" src="../dist/iceSkating.js"></script>
 <script type="text/javascript">
 	var a = new iceSkating({
-		containerId: '#sw1',
+		containerId: '#ic1',
+        animationDuration: 300,
+        clickCallback: {
+            0: function(){
+                console.log('swiper1')
+            },
+            1: function(){
+                console.log('swiper2')
+            }
+        }
 	});
+    //var index = 0;
+    // setInterval(function(){
+    //     if(index == 3){
+    //         index = 0;
+            
+    //     }
+    //     console.log(index)
+    //     a.moveToIndex(index);
+    //     index++;
+    //     },2000)
+
 	var b = new iceSkating({
-		containerId: '#sw2',
+		containerId: '#ic2',
 		direction: 'y'
 	});
-    document.querySelector('#sw1').addEventListener('click',function(){
-        console.log(111)
-    })
+    var c = new iceSkating({
+        containerId: '#ic3'
+    });
 </script>
 </body>
 </html>

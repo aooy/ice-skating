@@ -12,14 +12,8 @@ function iceSkating(option){
 	if (!(this instanceof iceSkating)) return new iceSkating(option);
 
 	var container = document.querySelector(option.containerId);
-	var defaults = {
-		touchRatio: 0.6,
-		direction: 'x',
-		swipeRatio: 0.1,
-		animationDuration: 300
-	};
 	var id = option.containerId.substr(1),
-	    swipeRatio = option.swipeRatio || defaults.swipeRatio,
+	    swipeRatio = option.swipeRatio || 0.1,
 	 	childWidth = container.children[0].offsetWidth,
 		childHeight = container.children[0].offsetHeight;
 
@@ -31,15 +25,19 @@ function iceSkating(option){
 		index: 0,
 		translateX: 0,
 		translateY: 0,
-		touchRatio: option.touchRatio || defaults.touchRatio,
-		direction: option.direction || defaults.direction,
+		touchRatio: option.touchRatio || 0.6,
+		direction: option.direction || 'x',
 		swipeRatio: swipeRatio,
-		animationDuration: option.animationDuration || defaults.animationDuration,
+		animationDuration: option.animationDuration || 300,
+		fastClickTime: option.fastClickTime || 300,
 		limitDisX: swipeRatio * childWidth,
-		limitDisY: swipeRatio * childHeight
+		limitDisY: swipeRatio * childHeight,
+		clickCallback: option.clickCallback || {},
+		autoplayDelay: option.autoplayDelay || 2000
 	};
 
 	var ic = this;
+	ic.store = store[id];
 
 	ic.touchStart = function(e){
 		if (!ic.support.touch && 'which' in e && e.which === 3  || state.animating) return;
@@ -54,12 +52,12 @@ function iceSkating(option){
 		state.touchEnd = state.touchMove = false;
 		state.touchStart = true;
 		state.diffY = state.diffY = 0;
-
-		console.log('touchstart',state)
+		console.log('touchstart')
 	};
 
 	ic.touchMove = function(e){
 		if(e.target !== state.target || state.touchEnd || !state.touchStart) return;
+		console.log('touchmove')
 		state.touchMove = true;
 		var currentX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
         var currentY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
@@ -74,56 +72,61 @@ function iceSkating(option){
 	};
 
 	ic.touchEnd = function(e){
+		console.log('touchend',state)
 		state.touchEnd = true;
-		if(!state.touchStart || !state.touchMove) return;
-		if((e.timeStamp - state.startTime) < 200){
-			console.log('200ms')
+		if(!state.touchStart || state.animating) return;
+		var fastClick ;
+		if(fastClick = (e.timeStamp - state.startTime) < state.currStore.fastClickTime && !state.touchMove){
+			console.log('算点击')
+			var i = state.currStore.index;
+			if((i = state.currStore.clickCallback[i]) && typeof i === 'function') i();
+		}
+		if(!state.touchMove) return;
+		if(fastClick || (Math.abs(state.diffX) < state.currStore.limitDisX && Math.abs(state.diffY) < state.currStore.limitDisY)){
+		   console.log('200ms,未到界限')
 		   ic.recover(state.currStore.translateX, state.currStore.translateY, 0);
 		}else{
 			console.log('touchEnd')
-			var index = state.currStore.index;
-			if(Math.abs(state.diffX) < state.currStore.limitDisX && Math.abs(state.diffY) < state.currStore.limitDisY) {
-				console.log('未到界限')
-				ic.recover(state.currStore.translateX, state.currStore.translateY, 0);
+			if(state.diffX > 0 || state.diffY > 0) {
+				console.log('上一页')
+				ic.moveTo(state.currStore.index - 1);
 			}else{
-				if(state.diffX > 0 || state.diffY > 0) {
-					console.log('上一页')
-					ic.moveTo('preSibling');
-				}else{
-					console.log('下一页')
-					ic.moveTo('nextSibiling');
-				}
-			}			
+				console.log('下一页')
+				ic.moveTo(state.currStore.index + 1);
+			}	
 		}
 	};
 
 	ic.clearState = function(){
+		console.log('清理state')
 		state = Object.create(null);
 	};
 
-	ic.moveTo = function(type){
-		var index = type === 'nextSibiling' ? state.currStore.index + 1 : state.currStore.index - 1;
-		var currStore = state.currStore;
-		if(index < state.currStore.childLength && index > -1){
+	ic.moveTo = function(index){
+		var currStore = state.currStore || ic.store;
+		if(index < currStore.childLength && index > -1){
 			ic.setIndex(index);
-			if(state.currStore.direction === 'x'){	
-				ic.recover(-index * state.currStore.childWidth, 0, 0);
+			if(currStore.direction === 'x'){	
+				ic.recover(-index * currStore.childWidth, 0, 0);
 				currStore.translateX = -index * currStore.childWidth;
 			}else{
-				ic.recover(0 , -index * state.currStore.childHeight, 0);
+				ic.recover(0 , -index * currStore.childHeight, 0);
 				currStore.translateY = -index * currStore.childHeight;
 			}
 		}else {
-			ic.recover(state.currStore.translateX , state.currStore.translateY, 0);
+			ic.recover(currStore.translateX , currStore.translateY, 0);
 		}
 	};
+
 	ic.setIndex = function(index){
-		state.currStore.index = index;
+		var currStore = state.currStore || ic.store;
+		currStore.index = index;
 	};
 
 	ic.recover = function(x, y, z){
+		var store = state.currStore || ic.store;
 		state.animating = true;
-		ic.transitionDuration(state.currStore.animationDuration);
+		ic.transitionDuration(store.animationDuration);
 		ic.translate(x, y, z);
 	};
 
@@ -136,12 +139,14 @@ function iceSkating(option){
 	};
 
 	ic.transform = function(transform){
-		var elStyle = state.currentTarget.style;
+		var ele = state.currentTarget || container;
+		var elStyle = ele.style;
 		elStyle.webkitTransform = elStyle.MsTransform = elStyle.msTransform = elStyle.MozTransform = elStyle.OTransform = elStyle.transform = transform;
 	};
 
 	ic.transitionDuration = function(time){
-		var elStyle = state.currentTarget.style;
+		var ele = state.currentTarget || container;
+		var elStyle = ele.style;
 		elStyle.webkitTransitionDuration = elStyle.MsTransitionDuration = elStyle.msTransitionDuration = elStyle.MozTransitionDuration = elStyle.OTransitionDuration = elStyle.transitionDuration = time + 'ms';
 	};
 
@@ -149,8 +154,13 @@ function iceSkating(option){
 		console.log('transitionDurationEnd')
 		ic.transitionDuration(0);
 		ic.clearState();
+		if(store.autoPlay) ic.autoPlay();
 	};
-
+	ic.autoPlay = function(){
+		setTimeout(function(){
+			ic.moveTo();
+		},ic.store.autoplayDelay)
+	};
 	ic.initEvent = function(){
 		var events = ic.support.touch ? ['touchstart', 'touchmove', 'touchend']:['mousedown','mousemove','mouseup'];
 		var transitionEndEvents = ['webkitTransitionEnd', 'transitionend', 'oTransitionEnd', 'MSTransitionEnd', 'msTransitionEnd'];
@@ -176,8 +186,8 @@ iceSkating.prototype = {
 			return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
 		})(),
 		transforms3d : (function () {
-                var div = document.createElement('div').style;
-                return ('webkitPerspective' in div || 'MozPerspective' in div || 'OPerspective' in div || 'MsPerspective' in div || 'perspective' in div);
+            var div = document.createElement('div').style;
+            return ('webkitPerspective' in div || 'MozPerspective' in div || 'OPerspective' in div || 'MsPerspective' in div || 'perspective' in div);
         })()
 	}
 };
