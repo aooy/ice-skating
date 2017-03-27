@@ -1,6 +1,6 @@
 {
   "name": "ice-skating",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "most modern mobile touch slider",
   "main": "dist/iceSkating.js",
   "directories": {
