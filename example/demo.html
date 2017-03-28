@@ -8,7 +8,7 @@
 <body>
 <div class="swiper-container">
     <div class="swiper-wrapper" id="ic1">
-        <div class="swiper-slide">Slide 1<a href="www.hao123.com">2222</a></div>
+        <div class="swiper-slide">Slide 1</div>
         <div class="swiper-slide">Slide 2</div>
         <div class="swiper-slide">Slide 3</div>
     </div>
@@ -31,7 +31,8 @@
 <script type="text/javascript">
 	var a = new iceSkating({
 		containerId: '#ic1',
-        animationDuration: 300,
+        animationDuration: 1300,
+        autoPlay: true,
         clickCallback: {
             0: function(){
                 console.log('swiper1')
@@ -54,7 +55,8 @@
 
 	var b = new iceSkating({
 		containerId: '#ic2',
-		direction: 'y'
+		direction: 'y',
+        autoPlay: true
 	});
     var c = new iceSkating({
         containerId: '#ic3'
