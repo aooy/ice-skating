@@ -118,7 +118,6 @@ function iceSkating(option){
 	};
 
 	ic.moveTo = function(store, index){
-		//var currStore = state.currStore || ic.store;
 		var currStore = store;
 		console.log(currStore.id, 'moveTo')
 		if(index < currStore.childLength && index > -1){
@@ -136,20 +135,16 @@ function iceSkating(option){
 	};
 
 	ic.setIndex = function(store, index){
-		// var currStore = state.currStore || ic.store;
-		// currStore.index = index;
 		store.index = index;
 	};
 
 	ic.recover = function(store, x, y, z){
-		//var store = state.currStore || ic.store;
 		store.animating = true;
 		ic.transitionDuration(store.container, store.animationDuration);
 		ic.translate(store.container, x, y, z);
 	};
 
 	ic.translate = function(ele, x, y, z){
-	
 		if (ic.support.transforms3d){
 			ic.transform(ele, 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)');
 		} else {
@@ -158,13 +153,11 @@ function iceSkating(option){
 	};
 
 	ic.transform = function(ele, transform){
-		//var ele = state.currentTarget || container;
 		var elStyle = ele.style;
 		elStyle.webkitTransform = elStyle.MsTransform = elStyle.msTransform = elStyle.MozTransform = elStyle.OTransform = elStyle.transform = transform;
 	};
 
 	ic.transitionDuration = function(ele,time){
-		//var ele = state.currentTarget || container;
 		var elStyle = ele.style;
 		elStyle.webkitTransitionDuration = elStyle.MsTransitionDuration = elStyle.msTransitionDuration = elStyle.MozTransitionDuration = elStyle.OTransitionDuration = elStyle.transitionDuration = time + 'ms';
 	};
