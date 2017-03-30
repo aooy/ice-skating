@@ -34,7 +34,9 @@ function iceSkating(option){
 		fastClickTime: option.fastClickTime || 300,
 		limitDisX: swipeRatio * childWidth,
 		limitDisY: swipeRatio * childHeight,
-		clickCallback: option.clickCallback || {},
+		clickCallback: option.clickCallback,
+		swiperEndCallBack: option.swiperEndCallBack,
+		autoPlayID: null,
 		autoPlay: option.autoPlay || false,
 		autoplayDelay: option.autoplayDelay || 3000
 	};
@@ -63,7 +65,6 @@ function iceSkating(option){
 		state.touchMove = true;
 		var currentX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
         var currentY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
-        //var store = mainStore[state.id];
         var currStore = state.currStore;
         if(currStore.animating){
         	var animationTranslate = getTranslate(state.currentTarget);
@@ -72,7 +73,7 @@ function iceSkating(option){
         	currStore.animating = false;
         	removeTransitionDuration(currStore.container);
         }
-        if(currStore.autoPlayID){
+        if(currStore.autoPlayID !== null){
         	console.log(currStore.id,'清除定时器')
         	clearTimeout(currStore.autoPlayID);
         	currStore.autoPlayID = null;
@@ -94,8 +95,7 @@ function iceSkating(option){
 		var currStore = state.currStore;
 		if(fastClick = (e.timeStamp - state.startTime) < currStore.fastClickTime && !state.touchMove){
 			console.log('算点击')
-			var i = currStore.index;
-			if((i = currStore.clickCallback[i]) && typeof i === 'function') i();
+			if(typeof currStore.clickCallback === 'function')  currStore.clickCallback();
 		}
 		if(!state.touchMove) return;
 		if(fastClick || (Math.abs(state.diffX) < currStore.limitDisX && Math.abs(state.diffY) < currStore.limitDisY)){
@@ -163,6 +163,7 @@ function iceSkating(option){
 	};
 	var transitionDurationEndFn = function(){
 		console.log(ic.store.id,'transitionDurationEnd')
+		if(typeof ic.store.swiperEndCallBack === 'function')  ic.store.swiperEndCallBack();
 		transitionDuration(container, 0);
 		if(ic.store.id === state.id) state = Object.create(null);
 		if(ic.store.autoPlay) autoPlay(ic.store);
@@ -195,6 +196,7 @@ function iceSkating(option){
 
 	ic.moveToIndex = function(index){
 		var currStore = ic.store;
+		if(ic.store.index === index) return;
 		if(currStore.autoPlayID){
         	console.log(currStore.id,'清除定时器')
         	clearTimeout(currStore.autoPlayID);
