@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>myice</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body>
+<h3>demo1:<span id="clickTxt" style="color:#ec8b4b"></span></h3>
+<h3>自动播放/绑定点击/分页/水平方向/自适应</h3>
+<div class="ice-container">
+    <div class="ice-wrapper" id="icx">
+        <div class="ice-slide">Slide 1</div>
+        <div class="ice-slide">Slide 2</div>
+        <div class="ice-slide">Slide 3</div>
+    </div>
+    <div class="ice-paginationX" id="icxp" onselectstart="return false;" style="-moz-user-select:none;">
+        <span class="ice-pagination-bulletX  active">0</span>
+        <span class="ice-pagination-bulletX">1</span>
+        <span class="ice-pagination-bulletX">2</span>
+    </div>
+</div>
+<h3>demo2:</h3>
+<h3>自动播放/分页/垂直方向/自适应</h3>
+<div class="ice-container ice-container-vertical">
+    <div class="ice-wrapper" id="icy">
+        <div class="ice-slide">Slide 1</div>
+        <div class="ice-slide">Slide 2</div>
+        <div class="ice-slide">Slide 3</div>
+    </div>
+    <div class="ice-paginationY" id="icyp">
+        <span class="ice-pagination-bulletY  active">0</span>
+        <span class="ice-pagination-bulletY">1</span>
+        <span class="ice-pagination-bulletY">2</span>
+    </div>
+</div>
+
+<div class="ice-containerPc">
+<div class="ice-wrapperPc" id="icx3">
+    <div class="ice-slidePc">1</div>
+    <div class="ice-slidePc">2</div>
+    <div class="ice-slidePc">3</div>
+</div>
+</div>
+
+<script type="text/javascript" src="../dist/iceSkating.js"></script>
+<script type="text/javascript">
+
+    var paginationsX = [].slice.call(document.querySelector('#icxp').children);
+    var paginationsY = [].slice.call(document.querySelector('#icyp').children);
+    var switchPagination = function(eles, index){
+        eles.forEach(function(v, i){
+                if(i === index){
+                    v.classList.add('active');
+                }else{
+                    v.classList.remove('active');
+                }
+        });
+    };
+
+    //初始化分页按钮点击效果
+    var initPaginationClick = (function(){
+        //demo1
+        paginationsX.forEach(function(v, i){
+            v.addEventListener('click', function(){
+                switchPagination(paginationsX, i);
+                demo1.moveToIndex(i);
+            }, false)
+        });
+        //demo2
+        paginationsY.forEach(function(v, i){
+            v.addEventListener('click', function(){
+                switchPagination(paginationsY, i);
+                demo2.moveToIndex(i);
+            }, false)
+        });
+        return true;
+    })();    
+
+    //demo1
+	var demo1 = new iceSkating({
+		containerId: '#icx',
+        autoPlay: true,
+        clickCallback: function(){
+            var txt = document.querySelector('#clickTxt');
+            txt.textContent = '点击了slide'+ (demo1.getIndex()+1);
+            setTimeout(function(){
+                txt.textContent = '';
+            }, 1000)
+            console.log(demo1.getIndex(), 'clickCallback')
+        },
+        iceEndCallBack: function(){
+            switchPagination(paginationsX, demo1.getIndex());
+        }
+	});
+
+    //demo2
+	var demo2 = new iceSkating({
+		containerId: '#icy',
+		direction: 'y',
+        //autoPlay: true,
+        iceEndCallBack: function(){
+            switchPagination(paginationsY, demo2.getIndex());
+        }
+	});
+
+   var demo3 = new iceSkating({
+       containerId: '#icx3'
+   });
+
+</script>
+</body>
+</html>

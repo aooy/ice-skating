@@ -14,7 +14,7 @@ function iceSkating(option){
 	var container = document.querySelector(option.containerId);
 	
 	var id = option.containerId.substr(1),
-	    swipeRatio = option.swipeRatio || 0.1,
+	    criticalSwipe = option.criticalSwipe || 0.1,
 	    childWidth = container.children[0].offsetWidth,
 	    childHeight = container.children[0].offsetHeight;
 
@@ -29,13 +29,13 @@ function iceSkating(option){
 		translateY: 0,
 		touchRatio: option.touchRatio || 0.6,
 		direction: option.direction || 'x',
-		swipeRatio: swipeRatio,
+		criticalSwipe: criticalSwipe,
 		animationDuration: option.animationDuration || 300,
 		fastClickTime: option.fastClickTime || 300,
-		limitDisX: swipeRatio * childWidth,
-		limitDisY: swipeRatio * childHeight,
+		limitDisX: criticalSwipe * childWidth,
+		limitDisY: criticalSwipe * childHeight,
 		clickCallback: option.clickCallback,
-		swiperEndCallBack: option.swiperEndCallBack,
+		iceEndCallBack: option.iceEndCallBack,
 		autoPlayID: null,
 		autoPlay: option.autoPlay || false,
 		autoplayDelay: option.autoplayDelay || 3000
@@ -67,6 +67,7 @@ function iceSkating(option){
         var currentY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
         var currStore = state.currStore;
         if(currStore.animating){
+        	console.log('正在动画中')
         	var animationTranslate = getTranslate(state.currentTarget);
         	state.animatingX = animationTranslate.x - currStore.translateX;
         	state.animatingY = animationTranslate.y - currStore.translateY;
@@ -79,6 +80,7 @@ function iceSkating(option){
         	currStore.autoPlayID = null;
         }
 		if(currStore.direction === 'x'){
+			console.log('x方向')
 			state.diffX = Math.round((currentX - state.startX) * currStore.touchRatio);
 			translate(currStore.container, state.animatingX + state.diffX + state.currStore.translateX, 0, 0);
         }else{
@@ -93,13 +95,14 @@ function iceSkating(option){
 		if(!state.touchStart) return;
 		var fastClick ;
 		var currStore = state.currStore;
-		if(fastClick = (e.timeStamp - state.startTime) < currStore.fastClickTime && !state.touchMove){
+		if(fastClick = (e.timeStamp - state.startTime) < currStore.fastClickTime && !state.touchMove && typeof currStore.clickCallback === 'function'){
 			console.log('算点击')
-			if(typeof currStore.clickCallback === 'function')  currStore.clickCallback();
+			currStore.clickCallback();
 		}
 		if(!state.touchMove) return;
 		if(fastClick || (Math.abs(state.diffX) < currStore.limitDisX && Math.abs(state.diffY) < currStore.limitDisY)){
-		   console.log('200ms,未到界限')
+		   console.log('200ms,未到界限',state.diffX)
+		   if(state.diffX === 0 && state.diffY === 0 && currStore.autoPlay) autoPlay(currStore);
 		   recover(currStore, currStore.translateX, currStore.translateY, 0);
 		}else{
 			console.log('touchEnd')
@@ -141,6 +144,7 @@ function iceSkating(option){
 	};
 
 	var translate = function(ele, x, y, z){
+		console.log('设置距离x:',x)
 		if (ic.support.transforms3d){
 			transform(ele, 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)');
 		} else {
@@ -156,6 +160,9 @@ function iceSkating(option){
 	var transitionDuration = function(ele,time){
 		var elStyle = ele.style;
 		elStyle.webkitTransitionDuration = elStyle.MsTransitionDuration = elStyle.msTransitionDuration = elStyle.MozTransitionDuration = elStyle.OTransitionDuration = elStyle.transitionDuration = time + 'ms';
+		if(time === 0){
+			console.log('动画时间设为0')
+		}
 	};
 	var removeTransitionDuration = function(ele){
 		var elStyle = ele.style;
@@ -163,7 +170,7 @@ function iceSkating(option){
 	};
 	var transitionDurationEndFn = function(){
 		console.log(ic.store.id,'transitionDurationEnd')
-		if(typeof ic.store.swiperEndCallBack === 'function')  ic.store.swiperEndCallBack();
+		if(typeof ic.store.iceEndCallBack === 'function')  ic.store.iceEndCallBack();
 		transitionDuration(container, 0);
 		if(ic.store.id === state.id) state = Object.create(null);
 		if(ic.store.autoPlay) autoPlay(ic.store);
@@ -182,7 +189,7 @@ function iceSkating(option){
 	};
 
 	var autoPlay = function(store){
-		console.log(store.id,'轮播开始')
+		console.log(store.id,'轮播开始到',store.index)
 		store.autoPlayID = setTimeout(function(){
 			var index = store.index;
 			++index;
