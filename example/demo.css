@@ -60,6 +60,7 @@ div{
     -ms-flex-direction: column;
     -webkit-flex-direction: column;
     flex-direction: column;
+    touch-action: none;
 }
 .ice-containerPc{
     width:600px;

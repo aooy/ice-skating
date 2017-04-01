@@ -1,11 +1,8 @@
 {
   "name": "ice-skating",
-  "version": "0.2.0",
-  "description": "most modern mobile touch slider",
+  "version": "0.3.0",
+  "description": "A tiny mobile touch slider",
   "main": "dist/iceSkating.js",
-  "directories": {
-    "example": "example"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
