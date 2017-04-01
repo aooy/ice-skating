@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>myice</title>
+<meta charset="utf-8"/>
+<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body>
+
+<h3>pc端：</h3>
+<h3>分页/水平方向/宽高固定</h3>
+<div class="ice-containerPc">
+<div class="ice-wrapperPc" id="icPc">
+    <div class="ice-slidePc">Slide 1</div>
+    <div class="ice-slidePc">Slide 2</div>
+    <div class="ice-slidePc">Slide 3</div>
+</div>
+<div class="ice-paginationX" id="pcPaginations">
+        <span class="ice-pagination-bulletX  active">0</span>
+        <span class="ice-pagination-bulletX">1</span>
+        <span class="ice-pagination-bulletX">2</span>
+</div>
+</div>
+
+<script type="text/javascript" src="../dist/iceSkating.js"></script>
+<script type="text/javascript">
+    //按钮元素
+    var pcPaginations = [].slice.call(document.querySelector('#pcPaginations').children);
+    //按钮样式切换
+    var switchPagination = function(eles, index){
+        eles.forEach(function(v, i){
+                if(i === index){
+                    v.classList.add('active');
+                }else{
+                    v.classList.remove('active');
+                }
+        });
+    };
+    //初始化分页按钮点击事件
+    var initPaginationClick = (function(){
+        pcPaginations.forEach(function(v, i){
+            v.addEventListener('click', function(){
+                switchPagination(pcPaginations, i);
+                pc.moveToIndex(i);
+            }, false)
+        });
+    })(); 
+   var pc = new iceSkating({
+       containerId: '#icPc',
+       autoPlay: true,
+       iceEndCallBack: function(){
+          switchPagination(pcPaginations, pc.getIndex());
+       }
+   });
+
+
+</script>
+</body>
+</html>

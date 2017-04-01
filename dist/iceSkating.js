@@ -10,7 +10,10 @@ var mainStore = Object.create(null);
 var state = Object.create(null);
 function iceSkating(option){
 	if (!(this instanceof iceSkating)) return new iceSkating(option);
+
 	var ic = this;
+	if(!ic.support.transition) return;
+
 	var container = document.querySelector(option.containerId);
 	
 	var id = option.containerId.substr(1),
@@ -27,7 +30,7 @@ function iceSkating(option){
 		index: 0,
 		translateX: 0,
 		translateY: 0,
-		touchRatio: option.touchRatio || 0.6,
+		touchRatio: option.touchRatio || 1,
 		direction: option.direction || 'x',
 		criticalSwipe: criticalSwipe,
 		animationDuration: option.animationDuration || 300,
@@ -170,6 +173,7 @@ function iceSkating(option){
 	};
 	var transitionDurationEndFn = function(){
 		console.log(ic.store.id,'transitionDurationEnd')
+		ic.store.animating = false;
 		if(typeof ic.store.iceEndCallBack === 'function')  ic.store.iceEndCallBack();
 		transitionDuration(container, 0);
 		if(ic.store.id === state.id) state = Object.create(null);
@@ -203,7 +207,7 @@ function iceSkating(option){
 
 	ic.moveToIndex = function(index){
 		var currStore = ic.store;
-		if(ic.store.index === index) return;
+		if(currStore.index === index) return;
 		if(currStore.autoPlayID){
         	console.log(currStore.id,'清除定时器')
         	clearTimeout(currStore.autoPlayID);
@@ -244,6 +248,10 @@ iceSkating.prototype = {
 		transforms3d : (function () {
             var div = document.createElement('div').style;
             return ('webkitPerspective' in div || 'MozPerspective' in div || 'OPerspective' in div || 'MsPerspective' in div || 'perspective' in div);
+        })(),
+        transition : (function () {
+            var div = document.createElement('div').style;
+            return ('webkitTransition' in div || 'MozTransition' in div || 'OTransition' in div || 'MsTransition' in div || 'transition' in div);
         })()
 	}
 };

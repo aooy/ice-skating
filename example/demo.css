@@ -7,7 +7,7 @@ div{
 	position: relative;
 	overflow: hidden;
 	z-index: 1;
-	height: 250px;
+	height: 180px;
 	border: 1px solid #ccc;
 }
 .ice-wrapper{
@@ -62,22 +62,26 @@ div{
     flex-direction: column;
 }
 .ice-containerPc{
-    width:300px;
+    width:600px;
     height:200px;
     position:relative;
     margin: 0 auto;
     overflow: hidden;
+    border: 1px solid #ccc;
 }
 .ice-wrapperPc{
-    width:900px;
-    height:200px;
+    width:1800px;
+    height:100%;
     position:relative;
+    box-sizing: border-box;
 }
 .ice-slidePc{
-    width:300px;
+    width:600px;
     height: 100%;
     float: left;
     text-align: center;
+    border: 1px solid #36b5ab;
+    box-sizing: border-box;
 }
 .ice-paginationX{
     position: absolute;
