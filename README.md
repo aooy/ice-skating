@@ -69,4 +69,30 @@ fastClickTime | number | 300 | 单位ms，判定此次操作为点击的最大�
 clickCallback | function | null | 判定为点击操作时执行此函数
 iceEndCallBack | function | null | 每次动画结束时执行此函数
 
-### 实例提供的方法
+### 实例提供的方法：
+* **getIndex**
+
+取得当前滑块的索引，索引从0开始。
+
+```js
+//example
+var myIce = new iceSkating({
+       containerId: '#myIceId'
+   });
+var  currIndex = myIce.getIndex(); // 0 
+```
+
+* **moveToIndex(index)**
+
+index是一个number类型的索引参数,调用后会立即切换到相应的滑块。
+
+```js
+//example
+var myIce = new iceSkating({
+       containerId: '#myIceId'
+   });
+myIce.getIndex(); // 0 
+myIce.moveToIndex(1);
+myIce.getIndex(); // 1
+```
+**使用这两个方法可以实现点击按钮切换滑块的效果**
