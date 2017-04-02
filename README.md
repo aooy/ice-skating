@@ -96,3 +96,6 @@ myIce.moveToIndex(1);
 myIce.getIndex(); // 1
 ```
 **使用这两个方法可以实现点击按钮切换滑块的效果**
+
+## License
+[MIT](https://github.com/pakastin/redom/blob/master/LICENSE)
