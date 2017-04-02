@@ -17,7 +17,7 @@ function iceSkating(option){
 	var container = document.querySelector(option.containerId);
 	
 	var id = option.containerId.substr(1),
-	    criticalSwipe = option.criticalSwipe || 0.1,
+	    critical = option.critical || 0.1,
 	    childWidth = container.children[0].offsetWidth,
 	    childHeight = container.children[0].offsetHeight;
 
@@ -32,11 +32,11 @@ function iceSkating(option){
 		translateY: 0,
 		touchRatio: option.touchRatio || 1,
 		direction: option.direction || 'x',
-		criticalSwipe: criticalSwipe,
+		critical: critical,
 		animationDuration: option.animationDuration || 300,
 		fastClickTime: option.fastClickTime || 300,
-		limitDisX: criticalSwipe * childWidth,
-		limitDisY: criticalSwipe * childHeight,
+		limitDisX: critical * childWidth,
+		limitDisY: critical * childHeight,
 		clickCallback: option.clickCallback,
 		iceEndCallBack: option.iceEndCallBack,
 		autoPlayID: null,
@@ -59,18 +59,15 @@ function iceSkating(option){
 		state.touchStart = true;
 		state.diffY = state.diffY = 0;
 		state.animatingX = state.animatingY = 0;
-		console.log('touchstart')
 	};
 
 	var touchMove = function(e){
 		if(e.target !== state.target || state.touchEnd || !state.touchStart) return;
-		console.log('touchmove')
 		state.touchMove = true;
 		var currentX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
         var currentY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
         var currStore = state.currStore;
         if(currStore.animating){
-        	console.log('正在动画中')
         	var animationTranslate = getTranslate(state.currentTarget);
         	state.animatingX = animationTranslate.x - currStore.translateX;
         	state.animatingY = animationTranslate.y - currStore.translateY;
@@ -78,12 +75,10 @@ function iceSkating(option){
         	removeTransitionDuration(currStore.container);
         }
         if(currStore.autoPlayID !== null){
-        	console.log(currStore.id,'清除定时器')
         	clearTimeout(currStore.autoPlayID);
         	currStore.autoPlayID = null;
         }
 		if(currStore.direction === 'x'){
-			console.log('x方向')
 			state.diffX = Math.round((currentX - state.startX) * currStore.touchRatio);
 			translate(currStore.container, state.animatingX + state.diffX + state.currStore.translateX, 0, 0);
         }else{
@@ -93,27 +88,21 @@ function iceSkating(option){
 	};
 
 	var touchEnd = function(e){
-		console.log('touchend')
 		state.touchEnd = true;
 		if(!state.touchStart) return;
 		var fastClick ;
 		var currStore = state.currStore;
 		if(fastClick = (e.timeStamp - state.startTime) < currStore.fastClickTime && !state.touchMove && typeof currStore.clickCallback === 'function'){
-			console.log('算点击')
 			currStore.clickCallback();
 		}
 		if(!state.touchMove) return;
 		if(fastClick || (Math.abs(state.diffX) < currStore.limitDisX && Math.abs(state.diffY) < currStore.limitDisY)){
-		   console.log('200ms,未到界限',state.diffX)
 		   if(state.diffX === 0 && state.diffY === 0 && currStore.autoPlay) autoPlay(currStore);
 		   recover(currStore, currStore.translateX, currStore.translateY, 0);
 		}else{
-			console.log('touchEnd')
 			if(state.diffX > 0 || state.diffY > 0) {
-				console.log('上一页')
 				moveTo(currStore, currStore.index - 1);
 			}else{
-				console.log('下一页')
 				moveTo(currStore, currStore.index + 1);
 			}	
 		}
@@ -121,7 +110,6 @@ function iceSkating(option){
 
 	var moveTo = function(store, index){
 		var currStore = store;
-		console.log(currStore.id, 'moveTo')
 		if(index < currStore.childLength && index > -1){
 			setIndex(currStore, index);
 			if(currStore.direction === 'x'){	
@@ -147,7 +135,6 @@ function iceSkating(option){
 	};
 
 	var translate = function(ele, x, y, z){
-		console.log('设置距离x:',x)
 		if (ic.support.transforms3d){
 			transform(ele, 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)');
 		} else {
@@ -163,16 +150,14 @@ function iceSkating(option){
 	var transitionDuration = function(ele,time){
 		var elStyle = ele.style;
 		elStyle.webkitTransitionDuration = elStyle.MsTransitionDuration = elStyle.msTransitionDuration = elStyle.MozTransitionDuration = elStyle.OTransitionDuration = elStyle.transitionDuration = time + 'ms';
-		if(time === 0){
-			console.log('动画时间设为0')
-		}
 	};
+
 	var removeTransitionDuration = function(ele){
 		var elStyle = ele.style;
 		elStyle.webkitTransitionDuration = elStyle.MsTransitionDuration = elStyle.msTransitionDuration = elStyle.MozTransitionDuration = elStyle.OTransitionDuration = elStyle.transitionDuration = '';
 	};
+
 	var transitionDurationEndFn = function(){
-		console.log(ic.store.id,'transitionDurationEnd')
 		ic.store.animating = false;
 		if(typeof ic.store.iceEndCallBack === 'function')  ic.store.iceEndCallBack();
 		transitionDuration(container, 0);
@@ -193,7 +178,6 @@ function iceSkating(option){
 	};
 
 	var autoPlay = function(store){
-		console.log(store.id,'轮播开始到',store.index)
 		store.autoPlayID = setTimeout(function(){
 			var index = store.index;
 			++index;
@@ -209,7 +193,6 @@ function iceSkating(option){
 		var currStore = ic.store;
 		if(currStore.index === index) return;
 		if(currStore.autoPlayID){
-        	console.log(currStore.id,'清除定时器')
         	clearTimeout(currStore.autoPlayID);
         	currStore.autoPlayID = null;
         }
