@@ -5,7 +5,7 @@
 }(this, (function (exports) { 
 'use strict';
 
-var docTouch = false;
+var isInit = false;
 var mainStore = Object.create(null);
 var state = Object.create(null);
 function iceSkating(option){
@@ -41,13 +41,12 @@ function iceSkating(option){
 		iceEndCallBack: option.iceEndCallBack,
 		autoPlayID: null,
 		autoPlay: option.autoPlay || false,
-		autoplayDelay: option.autoplayDelay || 3000
+		autoplayDelay: option.autoplayDelay || 3000,
+		preventClicks: option.preventClicks || true
 	};
 
 	var touchStart = function(e){
 		if (!ic.support.touch && 'which' in e && e.which === 3) return;
-		e.preventDefault();
-        e.stopPropagation();
 		state.startX = e.type === 'touchstart' ? e.targetTouches[0].pageX : e.pageX;
         state.startY = e.type === 'touchstart' ? e.targetTouches[0].pageY : e.pageY;
 		state.startTime = e.timeStamp;
@@ -203,6 +202,11 @@ function iceSkating(option){
 		return ic.store.index;
 	};
 
+	ic.preventClicks = function(e){
+		e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+	};
 	var initEvent = function(){
 		var events = ic.support.touch ? ['touchstart', 'touchmove', 'touchend']:['mousedown','mousemove','mouseup'];
 		var transitionEndEvents = ['webkitTransitionEnd', 'transitionend', 'oTransitionEnd', 'MSTransitionEnd', 'msTransitionEnd'];
@@ -210,10 +214,11 @@ function iceSkating(option){
             ic.addEvent(container, transitionEndEvents[i], transitionDurationEndFn, false);
         } 
 		ic.addEvent(container, events[0], touchStart, false);
-		if(!docTouch){
+		if(ic.store.preventClicks) ic.addEvent(container, 'click', ic.preventClicks, false);
+		if(!isInit){
 			ic.addEvent(document, events[1], touchMove, false);
 			ic.addEvent(document, events[2], touchEnd, false);
-			docTouch = true;
+			isInit = true;
 		}
 	};
 	initEvent();
