@@ -56,7 +56,7 @@ function iceSkating(option){
 		state.currStore = mainStore[e.currentTarget.id];
 		state.touchEnd = state.touchMove = false;
 		state.touchStart = true;
-		state.diffY = state.diffY = 0;
+		state.diffX = state.diffY = 0;
 		state.animatingX = state.animatingY = 0;
 	};
 
