@@ -1,6 +1,6 @@
 {
   "name": "ice-skating",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A tiny mobile touch slider",
   "main": "dist/iceSkating.js",
   "scripts": {
