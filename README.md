@@ -65,6 +65,7 @@ autoplayDelay | number | 3000 | 单位ms，每次轮播的间隔时间
 touchRatio  | number | 1 | 滑动系数，滑块的移动距离 = 触摸距离 * 滑动系数
 direction  | string | x | 滑动方向，默认水平方向，y为垂直方向
 critical  |  number | 0.1 | 触发切换滑块的系数，例如0.1，只要移动当前滑块宽度的10%以上才会触发切换
+preventClicks | boolean | true | 是否禁止容器上的点击事件
 fastClickTime | number | 300 | 单位ms，判定此次操作为点击的最大时间，只要操作时间小于这个值，都认为是点击
 clickCallback | function | null | 判定为点击操作时执行此函数
 iceEndCallBack | function | null | 每次动画结束时执行此函数
