@@ -5,9 +5,13 @@
 }(this, (function (exports) { 
 'use strict';
 
+function isDef (s) { return s !== undefined; }
+function isNumber (n) { return typeof n === 'number'; }
+function isBoolean (b) { return typeof b === 'boolean'; }
+
 var isInit = false;
-var mainStore = Object.create(null);
 var state = Object.create(null);
+
 function iceSkating(option){
 	if (!(this instanceof iceSkating)) return new iceSkating(option);
 
@@ -17,11 +21,11 @@ function iceSkating(option){
 	var container = document.querySelector(option.containerId);
 	
 	var id = option.containerId.substr(1),
-	    critical = option.critical || 0.1,
+	    critical = isDef(option.critical) && isNumber (option.critical) ? option.critical : 0.1,
 	    childWidth = container.children[0].offsetWidth,
 	    childHeight = container.children[0].offsetHeight;
 
-	ic.store = mainStore[id] = {
+	ic.store = {	
 		id: id,
 		container: container,
 		childLength: container.children.length,
@@ -30,19 +34,19 @@ function iceSkating(option){
 		index: 0,
 		translateX: 0,
 		translateY: 0,
-		touchRatio: option.touchRatio || 1,
-		direction: option.direction || 'x',
+		touchRatio: isDef(option.touchRatio) && isNumber (option.touchRatio) ? option.touchRatio : 1,
+		direction: option.direction === 'y' ? 'y' : 'x',
 		critical: critical,
-		animationDuration: option.animationDuration || 300,
-		fastClickTime: option.fastClickTime || 300,
+		animationDuration: isDef(option.animationDuration) && isNumber (option.animationDuration) ? option.animationDuration : 300,
+		fastClickTime: isDef(option.fastClickTime) && isNumber (option.fastClickTime) ? option.fastClickTime : 300,
 		limitDisX: critical * childWidth,
 		limitDisY: critical * childHeight,
 		clickCallback: option.clickCallback,
 		iceEndCallBack: option.iceEndCallBack,
 		autoPlayID: null,
-		autoPlay: option.autoPlay || false,
-		autoplayDelay: option.autoplayDelay || 3000,
-		preventClicks: option.preventClicks || true
+		autoPlay: isDef (option.autoPlay) && isBoolean (option.autoPlay) ? option.autoPlay : false,
+		autoplayDelay: isDef (option.autoplayDelay) && isNumber (option.autoplayDelay) ? option.autoplayDelay : 3000,
+		preventClicks: isDef (option.preventClicks) && isBoolean (option.preventClicks) ? option.preventClicks : true
 	};
 
 	var touchStart = function(e){
@@ -53,7 +57,7 @@ function iceSkating(option){
 		state.currentTarget = e.currentTarget;
 		state.id = e.currentTarget.id;
 		state.target = e.target;
-		state.currStore = mainStore[e.currentTarget.id];
+		state.currStore = ic.store;
 		state.touchEnd = state.touchMove = false;
 		state.touchStart = true;
 		state.diffX = state.diffY = 0;
@@ -214,7 +218,7 @@ function iceSkating(option){
             ic.addEvent(container, transitionEndEvents[i], transitionDurationEndFn, false);
         } 
 		ic.addEvent(container, events[0], touchStart, false);
-		if(ic.store.preventClicks) ic.addEvent(container, 'click', ic.preventClicks, false);
+		if(ic.store.preventClicks) ic.addEvent(container, 'click', ic.preventClicks, true);
 		if(!isInit){
 			ic.addEvent(document, events[1], touchMove, false);
 			ic.addEvent(document, events[2], touchEnd, false);
