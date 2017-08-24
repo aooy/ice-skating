@@ -1,7 +1,7 @@
 # ice-skating
 
 提供基础功能轻量级的滑块插件。大约250行代码，支持ie10+以上的标准浏览器。
-
+思考过程[滑动效果的原理及实践一个滑动小插件](https://github.com/aooy/blog/issues/3)
 # example 
 
 * [移动端](https://aooy.github.io/iceSkating/example/mobile.html)
